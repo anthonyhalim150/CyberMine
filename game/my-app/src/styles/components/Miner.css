@@ -1,0 +1,16 @@
+.miner-sprite {
+    width: 48px; /* Width of one frame */
+    height: 48px; /* Height of one frame */
+    background-image: url('../../assets/sprout_lands/Characters/Basic\ Charakter\ Actions.png'); /* Ensure correct path */
+    background-size: 96px 576px; /* Full size of sprite sheet */
+    background-position-y: 0px; /* First row (mining animation) */
+}
+
+.mining {
+    animation: mining-animation 0.5s steps(2) infinite; 
+}
+
+@keyframes mining-animation {
+    0% { background-position-x: 0px; }
+    100% { background-position-x: -96px; } /* Move full sprite width */
+}

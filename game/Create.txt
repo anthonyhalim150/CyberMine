@@ -1,0 +1,337 @@
+This is my directory structure
+game/my-app
+├── public/                       # Static files accessible directly by the browser
+│   ├── favicon.ico               #Assume this exists
+│   ├── index.html                # Main HTML file
+│   ├── images/                   # Static images
+│   │   ├── miner.png             #Assume this exists
+│   │   ├── upgrade.png           #Assume this exists
+│   │   └── background.jpg        #Assume this exists
+│
+├── src/                          # Source code for the React frontend
+│   ├── components/               # Reusable React components
+│   │   ├── Header.js             # Displays the header with tokens
+│   │   ├── Miner.js              # Component for mining tokens
+│   │   ├── Upgrade.js            # Component for upgrading mining power
+│   │   └── ...other components
+|   |── styles/
+|   |    |── components/
+|   |        |── Header.css
+|   |    |── global/
+|   |        |── App.css
+│   ├── App.css              
+│   ├── utils/
+|   |   ├── auth.js               # Sanitization functions
+│   ├── App.js                    # Main React component
+│   ├── index.js                  # Entry point for React
+│   └── api/                      # API utility functions
+│       └── wallet.js             # Wallet update and other API calls
+│
+├── backend/                      # Backend API code
+│   ├── controllers/              # Request handlers
+│   │   ├── userController.js     # Logic for wallet updates and user management
+│   │   └── ...other controllers
+│   ├── entities/                 # Database interaction logic
+│   │   ├── userEntity.js         # User-related database queries
+│   │   └── ...other entities
+│   ├── routes/                   # Express routes
+│   │   ├── userRoutes.js         # User-related API routes
+│   │   └── ...other routes
+│   ├── db/                       # Database connection and configuration
+│   │   └── index.js              # Assume this exists
+│   ├── app.js                    # Express app setup
+│   ├── server.js                 # Server entry point
+│   └── middleware/               # Middleware (e.g., authentication)
+│       └── authMiddleware.js   
+|       └── loggerMiddleware.js   #Assume this exists
+|       └── errorHandlerMiddleware.js #Assume this exists
+├── process.env                   #Assume this exists
+├── package.json                  #Assume this exists
+├── package-lock.json             #Assume this exists
+├── README.md                     #Assume this exists
+└── .gitignore                    #Assume this exists
+
+
+
+CREATE DATABASE ecommerce;
+USE ecommerce;
+
+-- Since id cannot be reused, 
+-- e.g. If itemID 5 is deleted, database will never go to itemID 5
+-- Hence, I removed itemID as a referential integrity constraint
+-- Users can sell custom items
+-- https://storage.googleapis.com/my-product-images-shop/Game/LuckyBox/mythic-lucky-box.jpg
+-- https://storage.googleapis.com/my-product-images-shop/Game/GameItems/ExoSuit_Mark_II.png
+
+
+
+CREATE TABLE ITEMS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    category TEXT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    stock INT NOT NULL,
+    image VARCHAR(255),
+    created_by INT NOT NULL DEFAULT 1,
+    FOREIGN KEY (created_by) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+CREATE TABLE CUSTOM_ITEMS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    aesthetics_score DECIMAL(5,2) NOT NULL DEFAULT 0,
+    complexity_score DECIMAL(5,2) NOT NULL DEFAULT 0,
+    uniqueness_score DECIMAL(5,2) NOT NULL DEFAULT 0,
+    game_relevance_score DECIMAL(5,2) NOT NULL DEFAULT 0,
+    similarity_score DECIMAL(5,2) NOT NULL DEFAULT 1.0, 
+    created_by INT NOT NULL DEFAULT 1,
+    FOREIGN KEY (created_by) REFERENCES GAME_ITEMS(id) ON DELETE CASCADE
+    FOREIGN KEY (created_by) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+CREATE TABLE LUCKY_BOX (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL DEFAULT 50, -- Token cost to roll
+    allowed_rarities JSON NOT NULL, -- Rarity options (e.g., ["Rare", "Epic", "Legendary"])
+    allowed_categories JSON NOT NULL, -- Category options (e.g., ["Helmet", "Gloves", "Tool"])
+    rarity_weights JSON NOT NULL, -- Drop chances for each rarity (e.g., {"Common": 40, "Epic": 10})
+    image_url VARCHAR(255)
+);
+
+CREATE TABLE GAME_ITEMS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    category ENUM('Helmet', 'Gloves', 'Exosuit', 'Boots', 'Tool', 'Back Attachment', 'Pet', 'Accessory') NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    image VARCHAR(255),
+    created_by INT NOT NULL DEFAULT 1,
+    mining_power DECIMAL(10,2) NOT NULL DEFAULT 0,
+    mining_efficiency DECIMAL(10,2) NOT NULL DEFAULT 1.0,
+    rarity ENUM('Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Custom') DEFAULT 'Custom',
+    FOREIGN KEY (created_by) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+CREATE TABLE PLAYER_INVENTORY (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    item_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1, -- Number of the item owned
+    obtained_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES GAME_ITEMS(id) ON DELETE CASCADE,
+    UNIQUE (user_id, item_id) -- Ensures only one entry per user-item combination
+);
+CREATE TABLE EQUIPMENT (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    item_id INT NOT NULL,
+    slot ENUM('Helmet', 'Gloves', 'Exosuit', 'Boots', 'Tool', 'Back Attachment', 'Pet', 'Accessory') NOT NULL,
+    equipped_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE,
+    FOREIGN KEY (item_id) REFERENCES GAME_ITEMS(id) ON DELETE CASCADE,
+    UNIQUE (user_id, slot) -- Ensures only one item per slot per user
+);
+
+
+CREATE TABLE USERS(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    role ENUM('user', 'admin') DEFAULT 'user',
+    address VARCHAR(255) DEFAULT 'AHBYUBQCHEMEFS3FGV57MGLHNXTLN2SAFFYGEDB2ZVEAOT3MA5KFSA7WEU',
+    wallet  DECIMAL(15, 2) DEFAULT 0,
+    level INT NOT NULL DEFAULT 1,
+    xp INT NOT NULL DEFAULT 0,
+    capacity INT NOT NULL DEFAULT 20,
+);
+
+
+CREATE TABLE LEVELS (
+    level INT PRIMARY KEY,
+    xp_required INT NOT NULL
+);
+
+CREATE TABLE LEVEL_PERKS (
+    level INT PRIMARY KEY,
+    tokens_reward INT NOT NULL DEFAULT 0,
+    mining_power_boost INT NOT NULL DEFAULT 0,
+    mining_efficiency_boost DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    FOREIGN KEY (level) REFERENCES LEVELS(level) ON DELETE CASCADE
+);
+
+CREATE TABLE UPGRADES (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    cost DECIMAL(15, 2) NOT NULL,
+    mining_power_increase INT NOT NULL DEFAULT 0,
+    mining_efficiency_increase DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    rateIncrease FLOAT DEFAULT 0,
+    type  VARCHAR(50) DEFAULT 'Drill'
+);
+CREATE TABLE USER_UPGRADES (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    upgrade_id INT UNIQUE NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE,
+    FOREIGN KEY (upgrade_id) REFERENCES UPGRADES(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE USER_SETTINGS (
+    user_id INT PRIMARY KEY,
+    dark_mode BOOLEAN DEFAULT FALSE,
+    color_scheme VARCHAR(20) DEFAULT '#f8a488',
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE LIKES (
+    user_id INT,
+	item_id INT,
+    PRIMARY KEY (user_id, item_id),
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE, -- The constraint is a powerful feature in SQL that ensures referential integrity by automatically deleting rows in a child table when the corresponding rows in the parent table are deleted
+    FOREIGN KEY (item_id) REFERENCES ITEMS(id) ON DELETE CASCADE
+);
+
+-- Carts Table
+CREATE TABLE CART(
+    cart_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES USERS(id)  ON DELETE CASCADE
+);
+
+
+-- CartItems Table
+CREATE TABLE CARTITEMS (
+    cart_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    cart_id INT NOT NULL,
+    item_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(15, 2) NOT NULL,
+    FOREIGN KEY (cart_id) REFERENCES CART(cart_id),
+    FOREIGN KEY (item_id) REFERENCES ITEMS(id)  ON DELETE CASCADE
+);
+CREATE TABLE PENDING_TRANSACTIONS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id VARCHAR(255) NOT NULL UNIQUE, 
+    user_id INT NOT NULL,
+    amount DECIMAL(15, 2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+-- Different from TRANSACTIONS table
+CREATE TABLE  TRANSACTIONS(
+    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    total_amount DECIMAL(15, 2) NOT NULL,   -- Total price of the transaction
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES USERS(id)
+);
+
+
+
+CREATE TABLE SALE_ITEMS (
+    sales_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,
+    item_id INT NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(15, 2) NOT NULL,  -- The price at the time of sale
+    FOREIGN KEY (transaction_id) REFERENCES TRANSACTIONS(transaction_id)
+);
+
+
+CREATE TABLE COMMENTS(
+	comments_id INT AUTO_INCREMENT PRIMARY KEY,
+    comment TEXT,
+    user_id INT NOT NULL,
+    website_rating INT,
+    importance_rating INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES USERS(id)
+);
+
+CREATE TABLE FEEDBACK (
+    feedback_id INT AUTO_INCREMENT PRIMARY KEY,
+    comments_id INT NOT NULL,
+    true_importance INT,
+    true_quality INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (comments_id) REFERENCES COMMENTS(comments_id)
+);
+
+
+CREATE TABLE AUCTION_ITEMS(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    item_name VARCHAR(255) NOT NULL,
+    stock INT NOT NULL,
+    description TEXT,
+	category TEXT NOT NULL,
+    image VARCHAR(255),
+    starting_price DECIMAL(15, 2) NOT NULL,
+    starting_time DATETIME,
+	is_expired BOOLEAN DEFAULT FALSE,
+    duration INT NOT NULL, 
+    created_by INT NOT NULL DEFAULT 1,
+    processed BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (created_by) REFERENCES USERS(id) ON DELETE CASCADE;
+);
+
+ALTER TABLE AUCTION_ITEMS
+ADD COLUMN is_expired BOOLEAN DEFAULT FALSE;
+
+
+CREATE TABLE BIDS(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    auction_item_id INT NOT NULL,
+    user_id INT NOT NULL,
+    bid_amount DECIMAL(15, 2) NOT NULL,
+    bid_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (auction_item_id) REFERENCES AUCTION_ITEMS(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+-- To store the procedure, change the delimiter first as procedures are long, and it might execute if you use the delimiter ;
+DELIMITER $$
+
+CREATE PROCEDURE ExpireAuctionsAndUpdateWallet()
+BEGIN
+    -- Update is_expired for auctions where current time exceeds start time + duration
+    UPDATE AUCTION_ITEMS
+    SET is_expired = TRUE
+    WHERE is_expired = FALSE AND NOW() >= DATE_ADD(starting_time, INTERVAL duration SECOND);
+
+    -- Add the highest bid from each expired and unprocessed auction to the creators' wallets
+    UPDATE USERS u
+    JOIN (
+        SELECT ai.created_by, MAX(b.bid_amount) AS highest_bid, ai.id AS auction_id
+        FROM AUCTION_ITEMS ai
+        JOIN BIDS b ON ai.id = b.auction_item_id
+        WHERE ai.is_expired = TRUE AND ai.processed = FALSE
+        GROUP BY ai.created_by, ai.id
+    ) revenue ON u.id = revenue.created_by
+    SET u.wallet = u.wallet + revenue.highest_bid;
+
+    -- Mark auctions as processed after transferring payments
+    UPDATE AUCTION_ITEMS
+    SET processed = TRUE
+    WHERE is_expired = TRUE AND processed = FALSE;
+END$$
+
+DELIMITER ;
+
+
+
+CREATE EVENT ExpireAuctionEvent
+ON SCHEDULE EVERY 1 MINUTE
+DO
+CALL ExpireAuctionsAndUpdateWallet();
+
+
+SHOW EVENTS FROM ecommerce;

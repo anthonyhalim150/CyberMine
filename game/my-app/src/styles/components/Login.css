@@ -1,0 +1,121 @@
+/* Center Login Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #3498db, #8e44ad);
+  }
+  
+  /* Login Card */
+  .login-card {
+    background: white;
+    padding: 30px; /* Increased padding for better spacing */
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    width: 350px; /* Slightly wider for better input fit */
+    text-align: center;
+    animation: fadeIn 0.4s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Title */
+  .login-card h2 {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Input Group */
+  .input-group {
+    width: 100%; /* Ensures the input fields fit properly */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+  
+  /* Input Labels */
+  .input-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #444;
+  }
+  
+  /* Input Fields */
+  .input-group input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+  
+  .input-group input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+  }
+  
+  /* Login Button */
+  .login-button {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    margin-top: 10px;
+  }
+  
+  .login-button:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+  }
+  
+  /* Error Message */
+  .error-message {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  /* Fade-in Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 480px) {
+    .login-card {
+      width: 90%;
+      padding: 25px;
+    }
+  
+    .input-group input {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    .login-button {
+      font-size: 16px;
+      padding: 12px;
+    }
+  }
+  

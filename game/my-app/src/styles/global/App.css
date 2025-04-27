@@ -1,0 +1,100 @@
+/* General App Layout */
+.app {
+  text-align: center;
+  font-family: 'Comic Sans MS', 'Roboto', sans-serif; /* Fun and playful font */
+  background: linear-gradient(135deg, #f6d365, #fda085); /* Fun gradient background */
+  color: #333; /* Dark text for contrast */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 60px; /* Room for navigation if needed */
+}
+
+/* Section Styles */
+.stats,
+.miner,
+.upgrade {
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background */
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Fun shadow effect */
+  max-width: 600px;
+  width: 90%;
+  animation: pop-in 0.4s ease-out;
+}
+
+/* Fun Animations */
+@keyframes pop-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Buttons */
+button {
+  background-color: #ff6f61; /* Bright button color */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Add depth */
+}
+
+button:hover {
+  background-color: #ff4c39;
+  transform: scale(1.05); /* Slight hover scaling */
+}
+
+button:active {
+  transform: scale(0.95); /* Slightly shrink when clicked */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Section Headings */
+.stats h2,
+.miner h2,
+.upgrade h2 {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats,
+  .miner,
+  .upgrade {
+    padding: 15px;
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats,
+  .miner,
+  .upgrade {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  button {
+    font-size: 12px;
+    padding: 8px 15px;
+  }
+}

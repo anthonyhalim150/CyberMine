@@ -1,0 +1,92 @@
+.lucky-box-container {
+    text-align: center;
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+  }
+  
+  .lucky-box-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .lucky-box-card {
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 250px;
+    text-align: center;
+  }
+  
+  .roll-button {
+    background: #ff9800;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .roll-button:hover {
+    background: #e68900;
+  }
+  
+  .roll-result {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  /* Rarity Text Colors */
+/* Rarity Text Colors */
+.rarity-common {
+    color: grey;
+    background-color: transparent !important; /* Ensure no background */
+}
+
+.rarity-uncommon {
+    color: green;
+    background-color: transparent !important;
+}
+
+.rarity-rare {
+    color: blue;
+    background-color: transparent !important;
+}
+
+.rarity-epic {
+    color: purple;
+    background-color: transparent !important;
+}
+
+.rarity-legendary {
+    color: gold;
+    background-color: transparent !important;
+}
+
+.rarity-mythic {
+    color: red;
+    background-color: transparent !important;
+}
+
+.rarity-custom {
+    color: pink;
+    background-color: transparent !important;
+}
+
+
+.lucky-box-image {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}

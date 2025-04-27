@@ -1,0 +1,38 @@
+.stats {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    margin: 20px auto;
+    animation: pop-in 0.4s ease-out;
+  }
+  
+  .stats h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .stats p {
+    font-size: 18px;
+    margin: 5px 0;
+    font-weight: bold;
+    color: #555;
+  }
+  .logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.logout-button:hover {
+    background-color: #cc0000;
+}
