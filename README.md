@@ -46,6 +46,12 @@ Unlock randomized rewards such as rare tools, bonus resources, or unique mining 
 
 ---
 
+## 📜 Commit History
+
+For full commit history, please refer to [this repository](https://github.com/anthonyhalim150/TestWebsite).
+
+---
+
 ## 🏗️ Technologies Used
 
 | Technology         | Purpose                                       |
